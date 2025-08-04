@@ -52,6 +52,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            cd /home/ubuntu/jobblog-production/backend/build/libs
-            sudo pkill -f 'java -jar' || true
-            tmux new-session -d "nohup java -jar *.jar > app.log 2>&1"
+            cd /home/ubuntu/jobblog-production
+            pkill -f 'java -jar' || true
+            nohup java -jar *.jar > app.log 2>&1 &
