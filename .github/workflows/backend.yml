@@ -29,7 +29,9 @@ jobs:
           echo "${{ secrets.BACKEND_APP_PROD_YML }}" > backend/src/main/resources/application-prod.yml
 
       - name: Build with Gradle
-        run: ./gradlew bootJar
+        run: |
+          cd backend
+          ./gradlew bootJar
 
       - name: Upload JAR to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -38,7 +40,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
-          source: "build/libs/*.jar"
+          source: "backend/build/libs/*.jar"
           target: "/home/ubuntu/jobblog-production"
 
       - name: SSH and restart Spring Boot app
