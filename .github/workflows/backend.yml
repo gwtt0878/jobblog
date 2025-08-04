@@ -54,4 +54,4 @@ jobs:
           script: |
             cd /home/ubuntu/jobblog-production
             sudo pkill -f 'java -jar' || true
-            sudo nohup java -jar *.jar > app.log 2>&1 &
+            sudo nohup java -jar *.jar > app.log 2>&1 & disown
