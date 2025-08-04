@@ -42,7 +42,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           source: "backend/build/libs/*.jar"
-          target: "/home/ubuntu/jobblog-production"
+          target: "/home/ubuntu/jobblog-production/"
 
       - name: SSH and restart Spring Boot app
         uses: appleboy/ssh-action@v1.0.0
@@ -52,6 +52,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            cd /home/ubuntu/jobblog-production
+            cd /home/ubuntu/jobblog-production/backend/build/libs
             pkill -f 'java -jar' || true
             nohup java -jar *.jar > app.log 2>&1 &
