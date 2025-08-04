@@ -54,4 +54,4 @@ jobs:
           script: |
             cd /home/ubuntu/jobblog-production/backend/build/libs
             pkill -f 'java -jar' || true
-            nohup java -jar *.jar > app.log 2>&1 & disown
+            tmux new-session -d "nohup java -jar *.jar > app.log 2>&1 & disown"
