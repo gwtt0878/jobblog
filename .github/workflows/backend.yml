@@ -1,0 +1,54 @@
+name: Deploy Spring Boot to EC2
+
+on:
+  push:
+    branches:
+      - production
+  paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "corretto"
+          java-version: "21"
+
+      - name: Create backend application.yml
+        run: |
+          mkdir -p backend/src/main/resources
+          echo "${{ secrets.BACKEND_APP_YML }}" > backend/src/main/resources/application.yml
+          echo "${{ secrets.BACKEND_APP_PROD_YML }}" > backend/src/main/resources/application-prod.yml
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Upload JAR to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          port: ${{ secrets.EC2_PORT }}
+          source: "build/libs/*.jar"
+          target: "/home/ubuntu/jobblog-production"
+
+      - name: SSH and restart Spring Boot app
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          port: ${{ secrets.EC2_PORT }}
+          script: |
+            cd /home/ubuntu/jobblog-production
+            pkill -f 'java -jar' || true
+            nohup java -jar *.jar > app.log 2>&1 &
