@@ -52,7 +52,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            cd /home/ubuntu/jobblog-production
+            cd /home/ubuntu/jobblog-production/frontend
             npm install --production
             pm2 delete nextjs-app || true
             pm2 start npm --name "nextjs-app" -- start
