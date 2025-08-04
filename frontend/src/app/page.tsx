@@ -1,21 +1,31 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import axios from '@/lib/axios'
+import NavBar from '@/components/NavBar'
+import GoogleLogo from '@/components/GoogleLogo'
 
 export default function Home() {
-  const [health, setHealth] = useState('Checking...')
-
-  useEffect(() => {
-    axios.get('/health')
-      .then((res) => setHealth(res.data))
-      .catch(() => setHealth('Server is down 😢'))
-  }, [])
+  const handleGoogleLogin = () => {
+    const redirectUri = `${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI}`
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile`
+    window.location.href = url
+  }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold mb-4">JobBlog</h1>
-      <p className="text-xl text-gray-700">서버 상태: <span className="font-semibold">{health}</span></p>
-    </main>
+    <>
+      <NavBar />
+      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+        <h1 className="text-6xl font-bold mb-4">JobBlog</h1>
+        <p className="text-xl text-gray-700 mb-8">환영합니다!</p>
+        <p className="text-xl text-gray-700 mb-8">로그인 후 이용해주세요.</p>
+        
+        <button
+          onClick={handleGoogleLogin}
+          className="flex items-center justify-center space-x-3 bg-white border border-gray-300 rounded-lg px-6 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 shadow-sm hover:cursor-pointer"
+        >
+          <GoogleLogo />
+          <p className="text-md">Google 계정으로 시작하기</p>
+        </button>
+      </main>
+    </>
   )
 }
