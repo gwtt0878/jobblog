@@ -63,7 +63,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            sudo pkill -f 'java -jar' || true
+            sudo pkill -f 'java -jar' > /dev/null 2>&1 || true
 
       - name: nohup
         uses: appleboy/ssh-action@v1.0.0
