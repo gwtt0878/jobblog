@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Column;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -32,10 +33,18 @@ public class JobPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 128)
     private String companyName;
+
+    @Column(length = 128)
     private String title;
+
+    @Column(length = 4096)
     private String description;
+
+    @Column(columnDefinition = "TEXT")
     private String applyUrl;
+    
     private LocalDateTime closingDateTime;
 
     private JobStatus status;

@@ -63,7 +63,7 @@ export default function CreateJobPost() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-2">
-                  회사명 *
+                  회사명 * (최대 128자)
                 </label>
                 <input
                   type="text"
@@ -71,15 +71,19 @@ export default function CreateJobPost() {
                   name="companyName"
                   value={formData.companyName}
                   onChange={handleInputChange}
+                  maxLength={128}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="회사명을 입력하세요"
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.companyName.length}/128자
+                </p>
               </div>
 
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                  채용공고 제목 *
+                  채용공고 제목 * (최대 128자)
                 </label>
                 <input
                   type="text"
@@ -87,26 +91,34 @@ export default function CreateJobPost() {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
+                  maxLength={128}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="채용공고 제목을 입력하세요"
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.title.length}/128자
+                </p>
               </div>
 
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                  채용공고 내용 *
+                  채용공고 내용 * (최대 4096자)
                 </label>
                 <textarea
                   id="description"
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
+                  maxLength={4096}
                   required
                   rows={6}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="채용공고 내용을 입력하세요"
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.description.length}/4096자
+                </p>
               </div>
 
               <div>
