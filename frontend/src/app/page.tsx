@@ -1,9 +1,20 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import NavBar from '@/components/NavBar'
 import GoogleLogo from '@/components/GoogleLogo'
 
 export default function Home() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken')
+    if (accessToken) {
+      router.push('/dashboard')
+    }
+  }, [router])
+
   const handleGoogleLogin = () => {
     const redirectUri = `${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI}`
     const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile`
@@ -20,7 +31,7 @@ export default function Home() {
         
         <button
           onClick={handleGoogleLogin}
-          className="flex items-center justify-center space-x-3 bg-white border border-gray-300 rounded-lg px-6 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 shadow-sm hover:cursor-pointer"
+          className="flex items-center justify-center space-x-3 bg-white border border-gray-300 rounded-lg px-6 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 shadow-sm cursor-pointer"
         >
           <GoogleLogo />
           <p className="text-md">Google 계정으로 시작하기</p>

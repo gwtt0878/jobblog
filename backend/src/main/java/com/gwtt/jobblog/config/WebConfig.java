@@ -3,11 +3,19 @@ package com.gwtt.jobblog.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.gwtt.jobblog.auth.JwtAuthInterceptor;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Configuration
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer {
+
+    private final JwtAuthInterceptor jwtAuthInterceptor;
 
     @Value("${cors.allowed-origin}")
     private String allowedOrigin;
@@ -26,4 +34,9 @@ public class WebConfig {
         };
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(jwtAuthInterceptor)
+            .addPathPatterns("/**");
+    }
 }

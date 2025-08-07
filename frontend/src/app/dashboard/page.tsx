@@ -54,12 +54,28 @@ export default function Dashboard() {
           <p className="text-xl text-gray-700 mb-4">환영합니다, {user?.name}님!</p>
           <p className="text-gray-600 mb-8">JobBlog 대시보드에 오신 것을 환영합니다.</p>
           
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200 hover:cursor-pointer"
-          >
-            로그아웃
-          </button>
+          <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+            <button
+              onClick={() => router.push('/job-posts/create')}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
+            >
+              채용공고 등록
+            </button>
+            
+            <button
+              onClick={() => router.push('/job-posts/my')}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 cursor-pointer"
+            >
+              내가 올린 공고
+            </button>
+            
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200 cursor-pointer"
+            >
+              로그아웃
+            </button>
+          </div>
         </div>
       </main>
     </>
