@@ -48,6 +48,15 @@ public class JwtProvider {
             .build()
             .parseSignedClaims(token)
             .getPayload()
+            .get("email", String.class);
+    }
+
+    public String getProviderIdFromToken(String token) {
+        return Jwts.parser()
+            .verifyWith(getSigningKey())
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
             .getSubject();
     }
 
