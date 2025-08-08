@@ -1,33 +1,22 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import axios from '@/lib/axios'
-import { JobPostSimpleResponseDto, JobStatus } from '@/types/JobPost'
+import { JobPostSimpleResponseDto} from '@/types/JobPost'
 import NavBar from '@/components/NavBar'
 import Button from '@/components/Button'
 import { getStatusColor, getStatusText } from '@/utils/jobStatus'
 
-export default function JobPostsByDate() {
+export default function JobPostsByDateContent() {
   const router = useRouter()
-  const params = useParams()
-  const dateParam = params.date as string
+  const searchParams = useSearchParams()
+  const dateParam = searchParams.get('date')
   const [jobPosts, setJobPosts] = useState<JobPostSimpleResponseDto[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
-  useEffect(() => {
-    if (!dateParam) return
-
-    // URL 파라미터에서 날짜 파싱 (YYYY-MM-DD 형식)
-    const [year, month, day] = dateParam.split('-').map(Number)
-    const date = new Date(year, month - 1, day) // month는 0-based
-    setSelectedDate(date)
-
-    fetchJobPosts(date)
-  }, [dateParam])
-
-  const fetchJobPosts = async (date: Date) => {
+  const fetchJobPosts = useCallback(async (date: Date) => {
     try {
       const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
@@ -59,9 +48,19 @@ export default function JobPostsByDate() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [router])
 
+  
+  useEffect(() => {
+    if (!dateParam) return
 
+    // URL 파라미터에서 날짜 파싱 (YYYY-MM-DD 형식)
+    const [year, month, day] = dateParam.split('-').map(Number)
+    const date = new Date(year, month - 1, day) // month는 0-based
+    setSelectedDate(date)
+
+    fetchJobPosts(date)
+  }, [dateParam, fetchJobPosts])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -136,12 +135,12 @@ export default function JobPostsByDate() {
                   </div>
                 )}
                                  <Button
-                   onClick={() => router.push('/calendar')}
-                   variant="secondary"
-                   size="lg"
-                 >
-                   달력으로 돌아가기
-                 </Button>
+                  onClick={() => router.push('/calendar')}
+                  variant="secondary"
+                  size="lg"
+                >
+                  달력으로 돌아가기
+                </Button>
               </div>
             </div>
 
@@ -174,20 +173,7 @@ export default function JobPostsByDate() {
                       </div>
                     </div>
                     
-                    {post.applyUrl && (
-                      <div className="mt-3">
-                        <a
-                          href={post.applyUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 text-sm underline cursor-pointer"
-                        >
-                          지원 링크
-                        </a>
-                      </div>
-                    )}
-                    
-                                         <div className="mt-4 flex space-x-2">
+                    <div className="mt-4 flex space-x-2">
                        <Button
                          onClick={() => router.push(`/job-posts/${post.id}`)}
                          variant="info"

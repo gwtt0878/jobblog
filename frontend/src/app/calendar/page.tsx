@@ -176,15 +176,15 @@ export default function Calendar() {
                            </div>
                          )}
                          
-                         {/* 공고 개수 버튼 */}
-                         {dayJobPosts.length > 0 && (
-                           <div 
-                             className="text-xs text-blue-600 text-center cursor-pointer hover:bg-blue-50 p-1 rounded border border-blue-200 bg-blue-50"
-                             onClick={() => router.push(`/calendar/job-posts/${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`)}
-                           >
-                             {dayJobPosts.length}개 공고
-                           </div>
-                         )}
+                                                   {/* 공고 개수 버튼 */}
+                          {dayJobPosts.length > 0 && (
+                            <div 
+                              className="text-xs text-blue-600 text-center cursor-pointer hover:bg-blue-50 p-1 rounded border border-blue-200 bg-blue-50"
+                              onClick={() => router.push(`/calendar/job-posts?date=${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`)}
+                            >
+                              {dayJobPosts.length}개 공고
+                            </div>
+                          )}
                        </div>
                     </div>
                   )
