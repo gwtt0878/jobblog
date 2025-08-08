@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import axios from '@/lib/axios'
 import { JobPostRequestDto, JobStatus } from '@/types/JobPost'
 import NavBar from '@/components/NavBar'
+import Button from '@/components/Button'
 
 export default function CreateJobPost() {
   const router = useRouter()
@@ -153,20 +154,22 @@ export default function CreateJobPost() {
               </div>
 
               <div className="flex justify-end space-x-4 pt-6">
-                <button
+                <Button
                   type="button"
                   onClick={() => router.back()}
-                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200 cursor-pointer"
+                  variant="secondary"
+                  size="lg"
                 >
                   취소
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 cursor-pointer"
+                  variant="primary"
+                  size="lg"
                 >
                   {loading ? '등록 중...' : '등록하기'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>

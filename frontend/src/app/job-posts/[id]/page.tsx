@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import axios from '@/lib/axios'
-import { JobPostResponseDto, JobStatus } from '@/types/JobPost'
+import { JobPostResponseDto } from '@/types/JobPost'
 import NavBar from '@/components/NavBar'
+import Button from '@/components/Button'
+import { getStatusColor, getStatusText } from '@/utils/jobStatus'
 
 export default function JobPostDetail() {
   const router = useRouter()
@@ -72,39 +74,7 @@ export default function JobPostDetail() {
     }
   }
 
-  const getStatusColor = (status: JobStatus) => {
-    switch (status) {
-      case JobStatus.SAVED:
-        return 'bg-gray-100 text-gray-800'
-      case JobStatus.APPLIED:
-        return 'bg-blue-100 text-blue-800'
-      case JobStatus.REJECTED:
-        return 'bg-red-100 text-red-800'
-      case JobStatus.INTERVIEWED:
-        return 'bg-yellow-100 text-yellow-800'
-      case JobStatus.EXPIRED:
-        return 'bg-gray-100 text-gray-600'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
 
-  const getStatusText = (status: JobStatus) => {
-    switch (status) {
-      case JobStatus.SAVED:
-        return '저장됨'
-      case JobStatus.APPLIED:
-        return '지원함'
-      case JobStatus.REJECTED:
-        return '거절됨'
-      case JobStatus.INTERVIEWED:
-        return '면접 진행'
-      case JobStatus.EXPIRED:
-        return '만료됨'
-      default:
-        return status
-    }
-  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ko-KR', {
@@ -134,12 +104,13 @@ export default function JobPostDetail() {
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">공고를 찾을 수 없습니다</h2>
-            <button
+            <Button
               onClick={() => router.push('/job-posts/my')}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
+              variant="info"
+              size="lg"
             >
               목록으로 돌아가기
-            </button>
+            </Button>
           </div>
         </div>
       </>
@@ -202,25 +173,28 @@ export default function JobPostDetail() {
             </div>
 
             <div className="flex justify-end space-x-4">
-              <button
+              <Button
                 onClick={() => router.push(`/job-posts/${jobPost.id}/edit`)}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
+                variant="primary"
+                size="lg"
               >
                 수정
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 cursor-pointer"
+                variant="danger"
+                size="lg"
               >
                 {deleting ? '삭제 중...' : '삭제'}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => router.push('/job-posts/my')}
-                className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+                variant="info"
+                size="lg"
               >
                 목록으로
-              </button>
+              </Button>
             </div>
           </div>
         </div>

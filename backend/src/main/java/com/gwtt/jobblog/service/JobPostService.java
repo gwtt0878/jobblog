@@ -1,5 +1,8 @@
 package com.gwtt.jobblog.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +43,15 @@ public class JobPostService {
 
     public List<JobPostSimpleResponseDto> getJobPostsByUser(Long userId) {
         return jobPostRepository.findAllByUser_Id(userId).stream()
+            .map(JobPostSimpleResponseDto::of)
+            .collect(Collectors.toList());
+    }
+
+    public List<JobPostSimpleResponseDto> searchJobPosts(LocalDate from, LocalDate to, User user) {
+        LocalDateTime startDateTime = from != null ? from.atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime endDateTime = to != null ? to.atTime(LocalTime.MAX) : LocalDateTime.MAX;
+
+        return jobPostRepository.searchOverlappingJobPosts(user.getId(), startDateTime, endDateTime).stream()
             .map(JobPostSimpleResponseDto::of)
             .collect(Collectors.toList());
     }

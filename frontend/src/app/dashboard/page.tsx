@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import NavBar from '@/components/NavBar'
 import { User } from '@/types/User'
 import { jwtDecode } from 'jwt-decode'
+import Button from '@/components/Button'
 
 type JwtPayload = {
   sub: string;
@@ -54,27 +55,42 @@ export default function Dashboard() {
           <p className="text-xl text-gray-700 mb-4">환영합니다, {user?.name}님!</p>
           <p className="text-gray-600 mb-8">JobBlog 대시보드에 오신 것을 환영합니다.</p>
           
-          <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-            <button
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <Button
               onClick={() => router.push('/job-posts/create')}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
+              variant="primary"
+              size="lg"
+              className="w-full"
             >
               채용공고 등록
-            </button>
+            </Button>
             
-            <button
+            <Button
               onClick={() => router.push('/job-posts/my')}
-              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 cursor-pointer"
+              variant="info"
+              size="lg"
+              className="w-full"
             >
               내가 올린 공고
-            </button>
+            </Button>
             
-            <button
+            <Button
+              onClick={() => router.push('/calendar')}
+              variant="green"
+              size="lg"
+              className="w-full"
+            >
+              공고 일정
+            </Button>
+            
+            <Button
               onClick={handleLogout}
-              className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200 cursor-pointer"
+              variant="danger"
+              size="lg"
+              className="w-full"
             >
               로그아웃
-            </button>
+            </Button>
           </div>
         </div>
       </main>

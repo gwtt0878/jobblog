@@ -1,5 +1,6 @@
 package com.gwtt.jobblog.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long> {
     Optional<JobPost> findWithUserById(@Param("id") Long id);
 
     List<JobPost> findAllByUser_Id(@Param("userId") Long userId);
+
+    @Query("SELECT jp FROM JobPost jp WHERE jp.user.id = :userId AND jp.closingDateTime >= :startDateTime AND jp.createdAt <= :endDateTime")
+    List<JobPost> searchOverlappingJobPosts(@Param("userId") Long userId, @Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
 }
