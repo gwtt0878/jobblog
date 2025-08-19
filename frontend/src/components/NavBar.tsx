@@ -3,19 +3,20 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from '@/lib/axios'
+import { getAccessToken } from '@/lib/auth'
 
 export default function NavBar() {
   const router = useRouter()
   const [health, setHealth] = useState('Checking...')
 
   useEffect(() => {
-    axios.get('/health')
+    axios.get('/health', {withCredentials: false})
       .then((res) => setHealth(res.data))
       .catch(() => setHealth('Server is down 😢'))
   }, [])
 
   const handleLogoClick = () => {
-    const accessToken = localStorage.getItem('accessToken')
+    const accessToken = getAccessToken()
     if (accessToken) {
       router.push('/dashboard')
     } else {

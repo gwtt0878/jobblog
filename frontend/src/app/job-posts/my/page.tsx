@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from '@/lib/axios'
+import { getAccessToken } from '@/lib/auth'
 import { JobPostSimpleResponseDto } from '@/types/JobPost'
 import NavBar from '@/components/NavBar'
 import Button from '@/components/Button'
@@ -17,7 +18,7 @@ export default function MyJobPosts() {
   useEffect(() => {
     const fetchMyJobPosts = async () => {
       try {
-        const accessToken = localStorage.getItem('accessToken')
+        const accessToken = getAccessToken()
         if (!accessToken) {
           router.push('/')
           return
@@ -48,7 +49,7 @@ export default function MyJobPosts() {
 
     setDeletingId(jobPostId)
     try {
-      const accessToken = localStorage.getItem('accessToken')
+      const accessToken = getAccessToken()
       if (!accessToken) {
         router.push('/')
         return

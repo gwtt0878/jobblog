@@ -4,12 +4,13 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import NavBar from '@/components/NavBar'
 import GoogleLogo from '@/components/GoogleLogo'
+import { getAccessToken } from '@/lib/auth'
 
 export default function Home() {
   const router = useRouter()
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken')
+    const accessToken = getAccessToken()
     if (accessToken) {
       router.push('/dashboard')
     }
@@ -17,7 +18,7 @@ export default function Home() {
 
   const handleGoogleLogin = () => {
     const redirectUri = `${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI}`
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile`
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile&prompt=select_account`
     window.location.href = url
   }
 

@@ -36,4 +36,5 @@ export interface JobPostSimpleResponseDto {
   closingDateTime: string
   createdAt: string
   updatedAt: string
-} 
+}
+

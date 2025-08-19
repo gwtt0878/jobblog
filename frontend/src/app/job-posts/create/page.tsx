@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from '@/lib/axios'
+import { getAccessToken } from '@/lib/auth'
 import { JobPostRequestDto, JobStatus } from '@/types/JobPost'
 import NavBar from '@/components/NavBar'
 import Button from '@/components/Button'
@@ -32,7 +33,7 @@ export default function CreateJobPost() {
     setLoading(true)
 
     try {
-      const accessToken = localStorage.getItem('accessToken')
+      const accessToken = getAccessToken()
       if (!accessToken) {
         router.push('/')
         return

@@ -44,15 +44,14 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
 
         String token = authHeader.substring(7);
 
-        if (!jwtProvider.isValidToken(token)) {
+        if (!jwtProvider.isValidAccessToken(token)) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "로그인이 필요합니다.");
             return false;
         }
 
-        String email = jwtProvider.getEmailFromToken(token);
-        String providerId = jwtProvider.getProviderIdFromToken(token);
+        Long userId = Long.parseLong(jwtProvider.getUserIdFromToken(token));
 
-        User user = userRepository.findByEmailAndProviderId(email, providerId)
+        User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         request.setAttribute("user", user);

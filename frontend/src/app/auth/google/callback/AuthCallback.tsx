@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { setAccessToken } from '@/lib/auth'
 
 export default function AuthCallback() {
   const router = useRouter()
@@ -12,7 +13,7 @@ export default function AuthCallback() {
   useEffect(() => {
     const token = searchParams.get('token')
     if (token) {
-      localStorage.setItem('accessToken', token)
+      setAccessToken(token)
       setStatus('success')
       setMessage('로그인 성공! 대시보드로 이동합니다...')
       setTimeout(() => {

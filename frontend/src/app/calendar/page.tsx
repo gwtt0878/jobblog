@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from '@/lib/axios'
+import { getAccessToken } from '@/lib/auth'
 import { JobPostSimpleResponseDto, JobStatus } from '@/types/JobPost'
 import NavBar from '@/components/NavBar'
 import Button from '@/components/Button'
@@ -16,9 +17,6 @@ export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [jobPosts, setJobPosts] = useState<JobPostSimpleResponseDto[]>([])
   const [loading, setLoading] = useState(false)
-
-
-
 
   // 특정 날짜의 공고들 가져오기 (생성일부터 마감일까지 포함)
   const getJobPostsForDate = (date: Date) => {
@@ -64,7 +62,7 @@ export default function Calendar() {
   // 공고 데이터 가져오기 (이전/다음 달 포함)
   const fetchJobPosts = useCallback(async (from: Date, to: Date) => {
     try {
-      const accessToken = localStorage.getItem('accessToken')
+      const accessToken = getAccessToken()
       if (!accessToken) {
         router.push('/')
         return

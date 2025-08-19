@@ -43,4 +43,11 @@ public class User {
 
     @CreatedDate
     private LocalDateTime createdAt;
+    
+    @Column(nullable = false)
+    private int tokenVersion;
+
+    public void updateTokenVersion() {
+        this.tokenVersion++;
+    }
 }
