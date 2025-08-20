@@ -35,7 +35,7 @@ public class GoogleOAuthController {
         return ResponseEntity.status(HttpStatus.FOUND)
             .header(HttpHeaders.LOCATION, clientRedirectUri + "?token=" + tokens.get("accessToken"))
             .header(HttpHeaders.SET_COOKIE, "refreshToken=" + tokens.get("refreshToken") + "; HttpOnly;"
-            // + "Secure;"
+            + "Secure;"
             + "SameSite=Lax;" 
             + "Max-Age=1209600;"
             + "Path=/")
@@ -52,7 +52,7 @@ public class GoogleOAuthController {
 
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, "refreshToken=" + tokens.get("refreshToken") + "; HttpOnly;"
-            // + "Secure;"
+            + "Secure;"
             + "SameSite=Lax;" 
             + "Max-Age=1209600;"
             + "Path=/")
@@ -64,7 +64,7 @@ public class GoogleOAuthController {
         googleOAuthService.logout(refreshToken);
         return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, "refreshToken=; HttpOnly;"
-            // + "Secure;"
+            + "Secure;"
             + "SameSite=Lax;" 
             + "Max-Age=0;"
             + "Path=/")
