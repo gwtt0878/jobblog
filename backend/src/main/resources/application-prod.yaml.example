@@ -1,0 +1,38 @@
+cors:
+  allowed-origin: 
+
+spring:
+  application:
+    name: jobblog
+
+  datasource:
+    url: 
+    username: 
+    password: 
+
+  jpa:
+    hibernate:
+      ddl-auto:
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+    show-sql: true
+
+google:
+  client-id: 
+  client-secret: 
+  redirect-uri: 
+  scope:
+    - email
+    - profile
+    - openid
+
+jwt:
+  secret-key: 
+  secret-refresh-key: 
+  issuer: 
+  salt: 
+
+client:
+  redirect-uri: 
