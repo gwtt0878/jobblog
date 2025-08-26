@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.HttpMethod;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import com.gwtt.jobblog.repository.AttachmentRepository;
@@ -32,7 +33,7 @@ public class AttachmentService {
     private final AmazonS3 s3Client;
     private final AttachmentRepository attachmentRepository;
 
-    public String getPresignedUrl(String fileName, String contentType) {
+    public Map<String, String> getPresignedUrlAndStorageKey(String fileName, String contentType) {
         String storageKey = generateStorageKey(fileName);
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, storageKey)
@@ -40,11 +41,9 @@ public class AttachmentService {
             .withExpiration(Date.from(Instant.now().plus(EXPIRATION_TIME)))
             .withContentType(contentType);
 
-        return s3Client.generatePresignedUrl(generatePresignedUrlRequest).toString();
-    }
-
-    public String getStorageKey(String fileName) {
-        return generateStorageKey(fileName);
+        Map<String, String> response = Map.of("presignedUrl", s3Client.generatePresignedUrl(generatePresignedUrlRequest).toString(), 
+                                              "storageKey", storageKey);
+        return response;
     }
 
     @Transactional
@@ -65,6 +64,7 @@ public class AttachmentService {
     public String getDownloadUrl(Long id, User user) {
         Attachment attachment = attachmentRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("해당 첨부파일을 찾지 못했습니다."));
+            
         return s3Client.generatePresignedUrl(bucketName, attachment.getStorageKey(), new Date(System.currentTimeMillis() + EXPIRATION_TIME.toMillis())).toString();
     }
 

@@ -76,8 +76,32 @@ export const attachmentService = {
       }
     })
 
-    return response.data.downloadUrl
+    console.log(response.data);
+
+    return response.data
   }
+}
+
+export async function downloadFile(attachmentId: number, fileName: string): Promise<void> {
+  const downloadUrl = await attachmentService.getDownloadUrl(attachmentId);
+
+  // S3 presigned URL인 경우 fetch를 사용하여 Bearer 토큰 없이 요청
+  const response = await fetch(downloadUrl, {
+    method: 'GET',
+  })
+
+  if (!response.ok) {
+    throw new Error('파일 다운로드에 실패했습니다.')
+  }
+
+  const blob = await response.blob()
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = fileName
+  a.click()
+
+  window.URL.revokeObjectURL(url)
 }
 
 // 파일 크기 포맷팅 유틸리티

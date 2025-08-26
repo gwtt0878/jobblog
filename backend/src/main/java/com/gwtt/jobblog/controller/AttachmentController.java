@@ -27,11 +27,8 @@ public class AttachmentController {
     @PostMapping("/presigned-url")
     @LoginRequired
     public ResponseEntity<Map<String, String>> getPresignedUrl(@RequestBody AttachmentPresignedUrlDto attachmentPresignedUrlDto) {
-
-        String presignedUrl = attachmentService.getPresignedUrl(attachmentPresignedUrlDto.getFileName(), attachmentPresignedUrlDto.getContentType());
-        String storageKey = attachmentService.getStorageKey(attachmentPresignedUrlDto.getFileName());
-
-        Map<String, String> response = Map.of("presignedUrl", presignedUrl, "storageKey", storageKey);
+        Map<String, String> response = attachmentService.getPresignedUrlAndStorageKey(attachmentPresignedUrlDto.getFileName(), 
+                                                                                      attachmentPresignedUrlDto.getContentType());
 
         return ResponseEntity.ok(response);
     }

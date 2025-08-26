@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { AttachmentResponseDto } from '@/types/Attachment'
-import { attachmentService, formatFileSize } from '@/lib/attachment'
+import { attachmentService, downloadFile, formatFileSize } from '@/lib/attachment'
 
 interface AttachmentListProps {
   attachments: AttachmentResponseDto[]
@@ -30,16 +30,7 @@ export default function AttachmentList({
     setDownloadingIds(prev => new Set(prev).add(attachment.id))
     
     try {
-      const downloadUrl = await attachmentService.getDownloadUrl(attachment.id)
-      
-      // 새 창에서 다운로드 링크 열기
-      const link = document.createElement('a')
-      link.href = downloadUrl
-      link.download = attachment.originalName
-      link.target = '_blank'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      await downloadFile(attachment.id, attachment.originalName)
     } catch (error) {
       console.error('다운로드 실패:', error)
       alert('파일 다운로드에 실패했습니다.')
