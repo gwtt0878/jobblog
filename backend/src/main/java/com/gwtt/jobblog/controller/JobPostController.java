@@ -29,18 +29,19 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/job-posts")
 @RequiredArgsConstructor
 public class JobPostController {
-
     private final JobPostService jobPostService;
 
     @PostMapping
     @LoginRequired
     public ResponseEntity<Long> createJobPost(@RequestBody JobPostRequestDto jobPostRequest, @RequestAttribute("user") User user) {
-        return ResponseEntity.ok(jobPostService.createJobPost(jobPostRequest, user));
+        Long jobPostId = jobPostService.createJobPost(jobPostRequest, user);
+        return ResponseEntity.ok(jobPostId);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<JobPostResponseDto> getJobPost(@PathVariable Long id) {
-        return ResponseEntity.ok(jobPostService.getJobPost(id));
+        JobPostResponseDto jobPostResponseDto = jobPostService.getJobPost(id);
+        return ResponseEntity.ok(jobPostResponseDto);
     }
 
     @GetMapping("/my")

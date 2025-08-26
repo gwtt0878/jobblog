@@ -1,6 +1,7 @@
 package com.gwtt.jobblog.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.gwtt.jobblog.domain.JobStatus;
 
@@ -16,4 +17,6 @@ public class JobPostRequestDto {
     private String applyUrl;
     private LocalDateTime closingDateTime;
     private JobStatus status;
+
+    private List<Long> attachmentIds;
 }

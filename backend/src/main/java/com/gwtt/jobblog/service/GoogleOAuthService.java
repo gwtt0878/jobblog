@@ -22,8 +22,8 @@ import io.jsonwebtoken.Claims;
 import com.gwtt.jobblog.domain.RefreshToken;
 import com.gwtt.jobblog.domain.Provider;
 import com.gwtt.jobblog.domain.User;
-import com.gwtt.jobblog.dto.GoogleTokenResponse;
-import com.gwtt.jobblog.dto.GoogleUserResponse;
+import com.gwtt.jobblog.dto.GoogleTokenResponseDto;
+import com.gwtt.jobblog.dto.GoogleUserResponseDto;
 import com.gwtt.jobblog.exceptions.UnauthorizedException;
 import com.gwtt.jobblog.repository.RefreshTokenRepository;
 import com.gwtt.jobblog.repository.UserRepository;
@@ -63,7 +63,7 @@ public class GoogleOAuthService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
-        ResponseEntity<GoogleTokenResponse> response = restTemplate.postForEntity(tokenUrl, requestEntity, GoogleTokenResponse.class);
+        ResponseEntity<GoogleTokenResponseDto> response = restTemplate.postForEntity(tokenUrl, requestEntity, GoogleTokenResponseDto.class);
         
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new RuntimeException("Failed to get access token");
@@ -80,11 +80,11 @@ public class GoogleOAuthService {
         userInfoHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> userInfoRequest = new HttpEntity<>(userInfoHeaders);
-        ResponseEntity<GoogleUserResponse> userInfoResponse = restTemplate.exchange(
+        ResponseEntity<GoogleUserResponseDto> userInfoResponse = restTemplate.exchange(
             "https://www.googleapis.com/oauth2/v2/userinfo",
             HttpMethod.GET,
             userInfoRequest,
-            GoogleUserResponse.class
+            GoogleUserResponseDto.class
         );
 
         User user = userRepository.findByProviderAndProviderId(Provider.GOOGLE, userInfoResponse.getBody().getId())
@@ -171,7 +171,7 @@ public class GoogleOAuthService {
 
     }
 
-    private User registerUser(GoogleUserResponse userInfo) {
+    private User registerUser(GoogleUserResponseDto userInfo) {
         User user = User.builder()
             .email(userInfo.getEmail())
             .name(userInfo.getName())

@@ -144,6 +144,14 @@ export default function MyJobPosts() {
                     <div>
                       <span className="font-medium">등록일:</span> {formatDate(jobPost.createdAt)}
                     </div>
+                    {jobPost.attachmentCount && jobPost.attachmentCount > 0 && (
+                      <div className="flex items-center text-blue-600">
+                        <svg className="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clipRule="evenodd" />
+                        </svg>
+                        첨부파일 {jobPost.attachmentCount}개
+                      </div>
+                    )}
                   </div>
                   
                   <div className="mt-4 flex space-x-2">

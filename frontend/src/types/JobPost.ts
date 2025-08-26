@@ -1,3 +1,5 @@
+import { AttachmentResponseDto } from './Attachment'
+
 export enum JobStatus {
   SAVED = 'SAVED', // 기본 상태
   APPLIED = 'APPLIED',
@@ -13,6 +15,7 @@ export interface JobPostRequestDto {
   applyUrl: string
   closingDateTime: string // ISO 8601 형식
   status: JobStatus
+  attachmentIds?: number[] // Attachment ID 배열
 }
 
 export interface JobPostResponseDto {
@@ -26,7 +29,10 @@ export interface JobPostResponseDto {
   createdBy: string
   createdAt: string
   updatedAt: string
+  attachments?: AttachmentResponseDto[]
 }
+
+
 
 export interface JobPostSimpleResponseDto {
   id: number
@@ -36,5 +42,6 @@ export interface JobPostSimpleResponseDto {
   closingDateTime: string
   createdAt: string
   updatedAt: string
+  attachmentCount?: number
 }
 

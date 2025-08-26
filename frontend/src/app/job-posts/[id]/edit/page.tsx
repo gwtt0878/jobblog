@@ -1,12 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import axios from '@/lib/axios'
 import { getAccessToken } from '@/lib/auth'
 import { JobPostRequestDto, JobPostResponseDto, JobStatus } from '@/types/JobPost'
 import NavBar from '@/components/NavBar'
 import Button from '@/components/Button'
+import FileUpload from '@/components/FileUpload'
+
+import { attachmentService, formatFileSize } from '@/lib/attachment'
 
 export default function EditJobPost() {
   const router = useRouter()
@@ -15,13 +18,16 @@ export default function EditJobPost() {
   
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [jobPost, setJobPost] = useState<JobPostResponseDto | null>(null)
+  const [deletedAttachmentIds, setDeletedAttachmentIds] = useState<number[]>([]) // 삭제 예정 파일들
   const [formData, setFormData] = useState<JobPostRequestDto>({
     companyName: '',
     title: '',
     description: '',
     applyUrl: '',
     closingDateTime: '',
-    status: JobStatus.SAVED
+    status: JobStatus.SAVED,
+    attachmentIds: []
   })
 
   useEffect(() => {
@@ -39,20 +45,22 @@ export default function EditJobPost() {
           }
         })
 
-        const jobPost: JobPostResponseDto = response.data
+        const jobPostData: JobPostResponseDto = response.data
+        setJobPost(jobPostData)
         
         // datetime-local 형식으로 변환
-        const closingDateTime = new Date(jobPost.closingDateTime)
+        const closingDateTime = new Date(jobPostData.closingDateTime)
           .toISOString()
           .slice(0, 16)
 
         setFormData({
-          companyName: jobPost.companyName,
-          title: jobPost.title,
-          description: jobPost.description,
-          applyUrl: jobPost.applyUrl,
+          companyName: jobPostData.companyName,
+          title: jobPostData.title,
+          description: jobPostData.description,
+          applyUrl: jobPostData.applyUrl,
           closingDateTime: closingDateTime,
-          status: jobPost.status
+          status: jobPostData.status,
+          attachmentIds: []
         })
       } catch (error) {
         console.error('공고 조회 실패:', error)
@@ -74,6 +82,42 @@ export default function EditJobPost() {
     }))
   }
 
+  const handleFilesUploaded = useCallback((attachmentIds: number[]) => {
+    setFormData(prev => ({
+      ...prev,
+      attachmentIds: attachmentIds
+    }))
+  }, [])
+
+  const handleAttachmentDeleted = (attachmentId: number) => {
+    // 삭제 예정 목록에 추가 (실제로는 삭제하지 않음)
+    setDeletedAttachmentIds(prev => [...prev, attachmentId])
+  }
+
+  // 삭제 취소
+  const handleAttachmentRestore = (attachmentId: number) => {
+    setDeletedAttachmentIds(prev => prev.filter(id => id !== attachmentId))
+  }
+
+
+
+  // 다운로드 처리
+  const handleDownload = async (attachmentId: number, fileName: string) => {
+    try {
+      const downloadUrl = await attachmentService.getDownloadUrl(attachmentId)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = fileName
+      link.target = '_blank'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error('다운로드 실패:', error)
+      alert('파일 다운로드에 실패했습니다.')
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -85,6 +129,17 @@ export default function EditJobPost() {
         return
       }
 
+      // 1. 먼저 삭제 예정인 첨부파일들을 실제로 삭제
+      for (const attachmentId of deletedAttachmentIds) {
+        try {
+          await attachmentService.deleteAttachment(attachmentId)
+        } catch (error) {
+          console.error(`첨부파일 ${attachmentId} 삭제 실패:`, error)
+          // 개별 파일 삭제 실패해도 계속 진행
+        }
+      }
+
+      // 2. JobPost 업데이트
       await axios.put(`/job-posts/${jobPostId}`, formData, {
         headers: {
           'Authorization': `Bearer ${accessToken}`
@@ -232,10 +287,93 @@ export default function EditJobPost() {
                 </select>
               </div>
 
+              {/* 기존 첨부파일 목록 */}
+              {jobPost?.attachments && jobPost.attachments.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-gray-700">기존 첨부파일</h4>
+                  <div className="space-y-2">
+                    {jobPost.attachments.map((attachment) => {
+                      const isDeleted = deletedAttachmentIds.includes(attachment.id)
+                      return (
+                        <div 
+                          key={attachment.id} 
+                          className={`flex items-center justify-between p-3 border rounded-lg transition-all duration-200 ${
+                            isDeleted 
+                              ? 'bg-red-50 border-red-200 opacity-60' 
+                              : 'bg-gray-50 border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3 flex-1 min-w-0">
+                            <svg className="h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                            </svg>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-medium truncate ${
+                                isDeleted ? 'text-red-700 line-through' : 'text-gray-900'
+                              }`}>
+                                {attachment.originalName}
+                              </p>
+                              <p className={`text-xs ${
+                                isDeleted ? 'text-red-600' : 'text-gray-500'
+                              }`}>
+                                {formatFileSize(attachment.size)}
+                                {isDeleted && ' (삭제 예정)'}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2 ml-4">
+                            {!isDeleted && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownload(attachment.id, attachment.originalName)}
+                                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                >
+                                  다운로드
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleAttachmentDeleted(attachment.id)}
+                                  className="text-red-600 hover:text-red-800 text-sm font-medium"
+                                >
+                                  삭제
+                                </button>
+                              </>
+                            )}
+                            
+                            {isDeleted && (
+                              <button
+                                type="button"
+                                onClick={() => handleAttachmentRestore(attachment.id)}
+                                className="text-green-600 hover:text-green-800 text-sm font-medium"
+                              >
+                                복원
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 새 파일 업로드 */}
+              <FileUpload
+                onFilesUploaded={handleFilesUploaded}
+                existingAttachmentIds={formData.attachmentIds}
+                maxFiles={5}
+              />
+
               <div className="flex justify-end space-x-4 pt-6">
                 <Button
                   type="button"
-                  onClick={() => router.push(`/job-posts/${jobPostId}`)}
+                  onClick={() => {
+                    // 삭제 예정 목록 초기화 후 이전 페이지로
+                    setDeletedAttachmentIds([])
+                    router.push(`/job-posts/${jobPostId}`)
+                  }}
                   variant="secondary"
                   size="lg"
                 >

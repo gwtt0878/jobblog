@@ -2,12 +2,14 @@ package com.gwtt.jobblog.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Builder;
 
-@Data
-public class GoogleTokenResponse {
+@Getter
+@Builder
+public class GoogleTokenResponseDto {
     @JsonProperty("access_token")
-    private String accessToken;
+    private String accessToken; 
  
     @JsonProperty("expires_in")
     private String expiresIn;

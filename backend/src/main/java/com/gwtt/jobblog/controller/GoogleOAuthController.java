@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 
+import com.gwtt.jobblog.annotations.LoginRequired;
 import com.gwtt.jobblog.service.GoogleOAuthService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class GoogleOAuthController {
 
     private final GoogleOAuthService googleOAuthService;
+
+    
 
     @Value("${client.redirect-uri}")
     private String clientRedirectUri;
@@ -60,6 +63,7 @@ public class GoogleOAuthController {
     }
 
     @PostMapping("/logout")
+    @LoginRequired
     public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken") String refreshToken) {
         googleOAuthService.logout(refreshToken);
         return ResponseEntity.ok()

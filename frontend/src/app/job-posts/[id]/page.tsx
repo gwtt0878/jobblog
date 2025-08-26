@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import axios from '@/lib/axios'
-import { getAccessToken, clearAccessToken } from '@/lib/auth'
+import { getAccessToken } from '@/lib/auth'
 import { JobPostResponseDto } from '@/types/JobPost'
 import NavBar from '@/components/NavBar'
 import Button from '@/components/Button'
+import AttachmentList from '@/components/AttachmentList'
 import { getStatusColor, getStatusText } from '@/utils/jobStatus'
 
 export default function JobPostDetail() {
@@ -172,6 +173,17 @@ export default function JobPostDetail() {
                 <p className="text-gray-700 whitespace-pre-wrap">{jobPost.description}</p>
               </div>
             </div>
+
+            {/* 첨부파일 목록 */}
+            {jobPost.attachments && jobPost.attachments.length > 0 && (
+              <div className="mb-8">
+                <AttachmentList
+                  attachments={jobPost.attachments}
+                  showDownload={true}
+                  showDelete={false}
+                />
+              </div>
+            )}
 
             <div className="flex justify-end space-x-4">
               <Button

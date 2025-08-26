@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from '@/lib/axios'
 import { getAccessToken } from '@/lib/auth'
 import { JobPostRequestDto, JobStatus } from '@/types/JobPost'
 import NavBar from '@/components/NavBar'
 import Button from '@/components/Button'
+import FileUpload from '@/components/FileUpload'
 
 export default function CreateJobPost() {
   const router = useRouter()
@@ -17,7 +18,8 @@ export default function CreateJobPost() {
     description: '',
     applyUrl: '',
     closingDateTime: '',
-    status: JobStatus.SAVED
+    status: JobStatus.SAVED,
+    attachmentIds: []
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -27,6 +29,13 @@ export default function CreateJobPost() {
       [name]: value
     }))
   }
+
+  const handleFilesUploaded = useCallback((attachmentIds: number[]) => {
+    setFormData(prev => ({
+      ...prev,
+      attachmentIds: attachmentIds
+    }))
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -153,6 +162,12 @@ export default function CreateJobPost() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
+
+              <FileUpload
+                onFilesUploaded={handleFilesUploaded}
+                existingAttachmentIds={formData.attachmentIds}
+                maxFiles={5}
+              />
 
               <div className="flex justify-end space-x-4 pt-6">
                 <Button
